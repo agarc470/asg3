@@ -56,6 +56,7 @@ let u_Sampler2;
 let u_Sampler3;
 let u_whichTexture;
 let currentSkyTextureIndex;
+let currentFloorTextureIndex = 2;
 let worldBlocks = Array.from({ length: 32 }, () => Array.from({ length: 32 }, () => []));
 
 function setupWebGL() {
@@ -345,7 +346,7 @@ function sendImageToTexture0(image) {
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-  gl.generateMipmap(gl.TEXTURE_2D); 
+  gl.generateMipmap(gl.TEXTURE_2D);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.uniform1i(u_Sampler0, 0);
@@ -379,7 +380,7 @@ function sendImageToTexture2(image) {
   gl.activeTexture(gl.TEXTURE2);
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-  gl.generateMipmap(gl.TEXTURE_2D); 
+  gl.generateMipmap(gl.TEXTURE_2D);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.uniform1i(u_Sampler2, 2);
@@ -414,7 +415,7 @@ function main() {
   addActionsForHtmlUI();
   spawnInitialBlocks();
   document.onkeydown = keydown;
-  
+
   canvas.onmousedown = function (ev) {
     var [x, y] = convertCoordinatesEventToGL(ev);
     if (ev.shiftKey) {
@@ -436,24 +437,24 @@ function main() {
 
   canvas.onmousemove = function (ev) {
     if (isDragging) {
-        g_camera.setMovementScale(2);
-        var [newX, newY] = convertCoordinatesEventToGL(ev);
-        let deltaX = newX - lastMouseX;
+      g_camera.setMovementScale(2);
+      var [newX, newY] = convertCoordinatesEventToGL(ev);
+      let deltaX = newX - lastMouseX;
 
-        if (deltaX > 0) {
-          g_camera.panRight(); 
+      if (deltaX > 0) {
+        g_camera.panRight();
       } else {
-          g_camera.panLeft(); 
+        g_camera.panLeft();
       }
 
-        lastMouseX = newX;
-        lastMouseY = newY;
+      lastMouseX = newX;
+      lastMouseY = newY;
 
-        renderScene();
+      renderScene();
     }
-};
+  };
 
-  
+
   initTextures();
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -532,11 +533,11 @@ function keydown(ev) {
     g_camera.panLeft();
   } else if (ev.keyCode === 69) { // E key
     g_camera.panRight();
-  }else if (ev.keyCode === 66) { // B key for placing a block
+  } else if (ev.keyCode === 66) { // B key for placing a block
     placeBlock();
-} else if (ev.keyCode === 82) { // R key for removing a block
+  } else if (ev.keyCode === 82) { // R key for removing a block
     removeBlock();
-}
+  }
   renderScene();
 }
 
@@ -569,56 +570,61 @@ function spawnRandomBlock() {
 function drawMap() {
   var body = new Cube();
   for (let x = 0; x < 32; x++) {
-      for (let y = 0; y < 32; y++) {
-          if (x == 0 || x == 31 || y == 0 || y == 31) {
-              body.color = [1, 1, 1, 1]; 
-              body.textureNum = 2; 
-              body.matrix.setIdentity();
-              body.matrix.translate(0, -.73, 0);
-              body.matrix.scale(0.6, .6, 0.6);
-              body.matrix.translate(x - 16, 0, y - 16);
-              body.renderFaster();
-          }
-          // draw blocks stacked at this position
-          worldBlocks[x][y].forEach((block, index) => {
-              body.color = block.color;
-              body.textureNum = 3; 
-              body.matrix.setIdentity();
-              body.matrix.translate(0, index-.74, 0); // stack blocks on top of each other
-              body.matrix.translate(x - 16, 0, y - 16); // centering and setting position
-              body.renderFaster();
-          });
+    for (let y = 0; y < 32; y++) {
+      if (x == 0 || x == 31 || y == 0 || y == 31) {
+        body.color = [1, 1, 1, 1];
+        body.textureNum = 2;
+        body.matrix.setIdentity();
+        body.matrix.translate(0, -.73, 0);
+        body.matrix.scale(0.6, .6, 0.6);
+        body.matrix.translate(x - 16, 0, y - 16);
+        body.renderFaster();
       }
+      // draw blocks stacked at this position
+      worldBlocks[x][y].forEach((block, index) => {
+        body.color = block.color;
+        body.textureNum = 3;
+        body.matrix.setIdentity();
+        body.matrix.translate(0, index - .74, 0); // stack blocks on top of each other
+        body.matrix.translate(x - 16, 0, y - 16); // centering and setting position
+        body.renderFaster();
+      });
+    }
   }
 }
 function placeBlock() {
   const pos = getGridPosition();
   if (worldBlocks[pos.x][pos.z].length < 10) {  // height of stack
-      worldBlocks[pos.x][pos.z].push({ color: [1.0, 0.5, 0.0, 1.0] }); // orange block
-      console.log("Block placed at", pos);
+    worldBlocks[pos.x][pos.z].push({ color: [1.0, 0.5, 0.0, 1.0] }); // orange block
+    console.log("Block placed at", pos);
   }
 }
 
 function removeBlock() {
   const pos = getGridPosition();
   if (worldBlocks[pos.x][pos.z].length > 0) {
-      worldBlocks[pos.x][pos.z].pop();
-      console.log("Block removed from", pos);
-      blocksRemovedCount++;
-      if (blocksRemovedCount >= 10) {
-          currentSkyTextureIndex = 3;// reset counter after changing the texture
-      }
+    worldBlocks[pos.x][pos.z].pop();
+    console.log("Block removed from", pos);
+    blocksRemovedCount++;
+    if (blocksRemovedCount >= 10) {
+      playSuccessSound();
+      currentSkyTextureIndex = 3;// reset counter after changing the texture
+      currentFloorTextureIndex = -1;
+    }
   }
 }
-
+function playSuccessSound() {
+  var audio = document.getElementById('successSound');
+  audio.play();
+}
 function getGridPosition() {
-    const forward = g_camera.getForwardVector();
-    let gridX = Math.floor(g_camera.eye.elements[0] + forward.elements[0] * 3 + 16); // adjust multiplier for reach
-    let gridZ = Math.floor(g_camera.eye.elements[2] + forward.elements[2] * 3 + 16); // adjust multiplier for reach
-    return { 
-        x: Math.max(0, Math.min(31, gridX)), // ensure position stays within bounds
-        z: Math.max(0, Math.min(31, gridZ))
-    };
+  const forward = g_camera.getForwardVector();
+  let gridX = Math.floor(g_camera.eye.elements[0] + forward.elements[0] * 3 + 16); // adjust multiplier for reach
+  let gridZ = Math.floor(g_camera.eye.elements[2] + forward.elements[2] * 3 + 16); // adjust multiplier for reach
+  return {
+    x: Math.max(0, Math.min(31, gridX)), // ensure position stays within bounds
+    z: Math.max(0, Math.min(31, gridZ))
+  };
 }
 
 
@@ -667,7 +673,7 @@ function renderScene() {
 
   //draw body floor
   cube.color = [.4, .4, .4, 1.0];
-  cube.textureNum = -1;
+  cube.textureNum = currentFloorTextureIndex;
   cube.matrix.translate(0, -.75, 0);
   cube.matrix.scale(20, 0, 20);
   cube.matrix.translate(-.5, 0, -.5);
@@ -676,7 +682,7 @@ function renderScene() {
   // draw sky
   cube.color = [1.0, 0.0, 0.0, 1.0];
   cube.textureNum = 0;
-  cube.textureNum = currentSkyTextureIndex;  
+  cube.textureNum = currentSkyTextureIndex;
   cube.matrix.setIdentity();
   cube.matrix.scale(50, 50, 50);
   cube.matrix.translate(-.5, -.5, -.5);

@@ -7,48 +7,83 @@
 </head>
 
 <body onload="main()">
-  <p>
-    <canvas id="webgl" width="400" height="400">
-      Please use a browser that supports "canvas"
-    </canvas>
-  <p>
+  <div style="display: flex; align-items: flex-start;">
+    <div>
+      <canvas id="webgl" width="400" height="400">
+        Please use a browser that supports "canvas"
+      </canvas>
+    </div>
+    <div style="margin-left: 20px;">
+      <p>Use the following controls:</p>
+      <ul>
+        <li><b>W, A, S, D:</b> Move camera forward, left, backward, right.</li>
+        <li><b>Q, E:</b> Pan camera left and right.</li>
+        <li><b>B:</b> Place a block at the current location.</li>
+        <li><b>R:</b> Remove a block from the current location.</li>
+        <li><b>Shift + Mouse Click:</b> Spin the world and change the skybox texture.</li>
+        <p style="max-width: 600px; margin-top: 20px;">
+          <strong>Welcome to the Mysterious World of Arcticania!</strong>
+          <br>
+          You find yourself within an expansive skybox, standing on a sturdy floor bordered by dirt blocks under an
+          ethereal sky. Before you stands a majestic wolf, guardian of this realm, its eyes gleaming with untold
+          secrets.
+          <br>
+          Before embarking on your quest, you have the power to transform your environment: a shift-click on the canvas
+          will change the skybox to a dramatic lava texture, setting the stage for your adventure.
+          <br>
+          Your mission is to explore this mysterious world and collect 10 elusive blocks scattered randomly across the
+          land. Each block is cloaked in a bone texture, resonating with the theme of the world. Use <b>R</b> to remove
+          them as you navigate this strange terrain.
+          <br>
+          As you gather these blocks, the world around you will begin to transform. Upon collecting all ten, the skybox
+          itself will change to reveal a stunning bone texture, signifying your mastery over this arcane environment.
+          <br>
+          Ready your wits and prepare for an adventure like no other!
+        </p>
+      </ul>
+    </div>
+  </div>
 
   <p id="numdot"> XXX </p>
-  <p>
 
   <p>
     frontLeg1 <input type="range" min="-45" max="45" value="0" class="slider" id="frontLeg1">
     frontKnee1 <input type="range" min="-45" max="45" value="0" class="slider" id="frontKnee1">
     backLeg1 <input type="range" min="-45" max="45" value="0" class="slider" id="backLeg1">
     backKnee1 <input type="range" min="-45" max="45" value="0" class="slider" id="backKnee1">
+  </p>
   <p>
     frontLeg2 <input type="range" min="-45" max="45" value="0" class="slider" id="frontLeg2">
     frontKnee2 <input type="range" min="-45" max="45" value="0" class="slider" id="frontKnee2">
     backLeg2 <input type="range" min="-45" max="45" value="0" class="slider" id="backLeg2">
     backKnee2 <input type="range" min="-45" max="45" value="0" class="slider" id="backKnee2">
+  </p>
   <p>
     tail1 <input type="range" min="-45" max="45" value="0" class="slider" id="tail1">
     tail2 <input type="range" min="-45" max="45" value="0" class="slider" id="tail2">
     tail3 <input type="range" min="-45" max="45" value="0" class="slider" id="tail3">
     tail4 <input type="range" min="-45" max="45" value="0" class="slider" id="tail4">
+  </p>
   <p>
     Animation:
     <button type="button" id="animationYellowOnButton">ON</button>
     <button type="button" id="animationYellowOffButton">OFF</button>
+  </p>
   <p>
     Camera Angle X <input type="range" min="0" max="360" value="5" class="slider" id="angleSlideX">
+  </p>
   <p>
     Camera Angle Y <input type="range" min="0" max="180" value="5" class="slider" id="angleSlideY">
-  <p>
-
-    <script src="lib/webgl-utils.js"></script>
-    <script src="lib/webgl-debug.js"></script>
-    <script src="lib/cuon-matrix-cse160.js"></script>
-    <script src="Triangle.js"></script>
-    <script src="Cube.js"></script>
-    <script src="Cylinder.js"></script>
-    <script src="World.js"></script>
-    <script src="Camera.js"></script>
+  </p>
+  <audio id="successSound" src="magic.mp3" preload="auto"></audio>
+  <script src="lib/webgl-utils.js"></script>
+  <script src="lib/webgl-debug.js"></script>
+  <script src="lib/cuon-matrix-cse160.js"></script>
+  <script src="Triangle.js"></script>
+  <script src="Cube.js"></script>
+  <script src="Cylinder.js"></script>
+  <script src="World.js"></script>
+  <script src="Camera.js"></script>
 </body>
 
 </html>
